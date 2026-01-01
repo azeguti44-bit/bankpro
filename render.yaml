@@ -14,21 +14,4 @@ services:
           type: web
           name: banco-app
           property: host
-      - key: DATABASE_URL
-        fromService:
-          type: pserv
-          name: banco-db
-          property: connectionString
     plan: starter
-
-  - type: pserv
-    name: banco-db
-    runtime: postgresql
-    plan: starter
-    envVars:
-      - key: POSTGRES_DB
-        value: banco
-      - key: POSTGRES_USER
-        value: banco_user
-      - key: POSTGRES_PASSWORD
-        generateValue: true
