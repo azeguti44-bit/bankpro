@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BankPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f0f2f5; height: 100vh; display: flex; align-items: center; }
+        .login-card { width: 100%; max-width: 400px; padding: 15px; margin: auto; }
+        .card { border: none; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1); }
+        .btn-login { font-size: 0.9rem; letter-spacing: 0.05rem; padding: 0.75rem 1rem; }
+        /* Estilização para os campos do Django */
+        input { 
+            display: block; width: 100%; padding: .375rem .75rem;
+            border: 1px solid #ced4da; border-radius: .375rem; margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="card">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">🏦 BankGo</h2>
+                <p class="text-muted">Acesse sua conta com CPF e Senha</p>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        CPF ou Senha incorretos.
+                    </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label">Usuário (CPF)</label>
+                    {{ form.username }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Senha</label>
+                    {{ form.password }}
+                </div>
+
+                <div class="d-grid">
+                    <button class="btn btn-primary btn-login fw-bold" type="submit">Entrar</button>
+                </div>
+                <div class="text-center mt-3">
+    <p class="small text-muted">Ainda não tem conta? <a href="{% url 'cadastrar_usuario' %}" class="text-decoration-none">Cadastre-se</a></p>
+    <a href="{% url 'entrance' %}" class="btn btn-link btn-sm text-secondary">Voltar ao início</a>
+</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

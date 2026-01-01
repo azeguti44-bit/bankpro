@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bem-vindo - BankPro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Mantendo o seu CSS original para as páginas combinarem */
+        body { background-color: #f0f2f5; height: 100vh; display: flex; align-items: center; }
+        .login-card { width: 100%; max-width: 450px; padding: 15px; margin: auto; }
+        .card { border: none; border-radius: 1rem; box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1); }
+        .btn-action { font-size: 0.9rem; letter-spacing: 0.05rem; padding: 0.75rem 1rem; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="card">
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold">🏦 BankGo</h2>
+                <p class="text-muted">Seja bem-vindo ao seu banco digital.</p>
+            </div>
+
+            <div class="d-grid gap-2">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-action fw-bold">
+                    Já sou cliente (Fazer Login)
+                </a>
+                
+                <a href="{% url 'cadastrar_usuario' %}" class="btn btn-outline-dark btn-action fw-bold">
+                    Quero abrir uma conta
+                </a>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">Segurança garantida BankGo &copy; 2026</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

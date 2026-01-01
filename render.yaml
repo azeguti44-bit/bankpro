@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: banco-app
+    runtime: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    startCommand: gunicorn banco.wsgi --bind 0.0.0.0:$PORT
+    envVars:
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        fromService:
+          type: web
+          name: banco-app
+          property: host
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: banco-db
+          property: connectionString
+    plan: starter
+
+  - type: pserv
+    name: banco-db
+    runtime: postgresql
+    plan: starter
+    envVars:
+      - key: POSTGRES_DB
+        value: banco
+      - key: POSTGRES_USER
+        value: banco_user
+      - key: POSTGRES_PASSWORD
+        generateValue: true
