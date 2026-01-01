@@ -3,7 +3,7 @@ services:
     name: banco-app
     runtime: python
     buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
-    startCommand: gunicorn banco.wsgi --bind 0.0.0.0:$PORT
+    startCommand: "gunicorn banco.wsgi:application --log-file -"
     envVars:
       - key: DEBUG
         value: "false"
