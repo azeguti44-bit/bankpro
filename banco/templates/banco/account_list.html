@@ -57,7 +57,13 @@
                         <td class="d-none d-lg-table-cell"><code>{{ account.number }}</code></td>
                         <td>
                             <span class="badge bg-info text-dark" style="font-size: 0.75rem;">
-                                {{ account.get_account_type_display|truncatechars:10 }}
+                                {% if "CORRENTE" in account.get_account_type_display.upper %}
+                                    Corrente
+                                {% elif "POUPANCA" in account.get_account_type_display.upper or "POUPANÇA" in account.get_account_type_display.upper %}
+                                    Poupança
+                                {% else %}
+                                    {{ account.get_account_type_display }}
+                                {% endif %}
                             </span>
                         </td>
                         <td class="{% if account.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
