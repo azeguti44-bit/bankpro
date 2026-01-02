@@ -2,15 +2,15 @@
 # exit on error
 set -o errexit
 
-# 1. Forçar a instalação do Django e dependências no Python global do Render
+# 1. FORÇAR A INSTALAÇÃO USANDO O PIP (Ignora o Poetry do Render)
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 
-# 2. Roda os comandos chamando o 'python -m django' ou direto pelo python
+# 2. COMANDOS DO DJANGO
 python manage.py collectstatic --no-input
 python manage.py migrate
 
-# 3. O script dos usuários
+# 3. SCRIPT DE USUÁRIOS
 python manage.py shell << END
 from django.contrib.auth import get_user_model
 from django.apps import apps
@@ -31,6 +31,7 @@ def ajustar_ou_criar(username, nome, cpf, email, senha):
         user.save()
         print(f"Senha de {username} atualizada.")
 
+# Supervisor
 sup = User.objects.filter(username='supervisor').first()
 if sup:
     sup.set_password('admin_senha123')
