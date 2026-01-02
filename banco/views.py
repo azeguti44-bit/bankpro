@@ -102,9 +102,6 @@ def entrance(request):
 
 @login_required
 def transferir(request):
-    if request.user.is_staff:
-        messages.warning(request, "Administradores não realizam transferências.")
-        return redirect('account_list')
 
     if request.method == 'POST':
         form = TransferenciaentrecontasForm(request.POST, user=request.user)
