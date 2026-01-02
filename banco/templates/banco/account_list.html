@@ -34,61 +34,76 @@
 
     <div class="card p-2 p-md-3">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="d-none d-md-table-header-group">
-                    <tr>
-                        <th>Usuário</th>
-                        <th class="d-none d-lg-table-cell">Número</th>
-                        <th>Tipo</th>
-                        <th>Saldo</th>
-                        <th class="text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for account in accounts %}
-                    <tr>
-                        <td>
-                            <div class="fw-bold text-truncate" style="max-width: 150px;">
-                                {{ account.user.nome_completo|default:account.user.username }}
-                            </div>
-                            <small class="text-muted d-block">@{{ account.user.username }}</small>
-                            <small class="d-md-none text-secondary">CC: {{ account.number }}</small>
-                        </td>
-                        <td class="d-none d-lg-table-cell"><code>{{ account.number }}</code></td>
-                        <td>
-                            <span class="badge bg-info text-dark" style="font-size: 0.75rem;">
-                                {% if "CORRENTE" in account.get_account_type_display.upper %}
-                                    Corrente
-                                {% elif "POUPANCA" in account.get_account_type_display.upper or "POUPANÇA" in account.get_account_type_display.upper %}
-                                    Poupança
-                                {% else %}
-                                    {{ account.get_account_type_display }}
-                                {% endif %}
-                            </span>
-                        </td>
-                        <td class="{% if account.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
-                            <small class="d-block d-md-none text-muted" style="font-size: 0.6rem;">SALDO</small>
-                            R$ {{ account.balance|floatformat:2 }}
-                        </td>
-                        <td class="text-center">
-                            <div class="d-flex flex-column flex-md-row justify-content-center gap-1 gap-md-2">
-                                <a href="{% url 'transaction_list' account.id %}" class="btn btn-sm btn-outline-primary py-1 px-2">
-                                    <i class="fas fa-list-ul"></i> <span class="d-none d-xl-inline">Extrato</span>
-                                </a>
-                                {% if user.is_staff %}
-                                <form action="{% url 'excluir_usuario' account.user.id %}" method="POST" class="m-0">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" onclick="return confirm('Excluir?')">
-                                        <i class="fas fa-trash-alt"></i> <span class="d-none d-xl-inline">Excluir</span>
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="card p-2 p-md-3">
+    {% if not user.is_staff %}
+        <div class="p-3 border-bottom mb-3">
+            <span class="text-muted small d-block">Cliente</span>
+            <h2 class="h5 fw-bold mb-0">{{ user.nome_completo|default:user.username }}</h2>
+        </div>
+    {% endif %}
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    {% if user.is_staff %}
+                        <th>Usuário</th> {% endif %}
+                    <th>Conta</th>
+                    <th>Tipo</th>
+                    <th>Saldo</th>
+                    <th class="text-center">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in accounts %}
+                <tr>
+                    {% if user.is_staff %}
+                    <td>
+                        <div class="fw-bold">{{ account.user.nome_completo|default:account.user.username }}</div>
+                        <small class="text-muted">@{{ account.user.username }}</small>
+                    </td>
+                    {% endif %}
+
+                    <td><code>{{ account.number }}</code></td>
+                    
+                    <td>
+                        {% if "CORRENTE" in account.get_account_type_display.upper %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Corrente</span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle">Poupança</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="{% if account.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
+                        R$ {{ account.balance|floatformat:2 }}
+                    </td>
+
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="{% url 'transaction_list' account.id %}" class="btn btn-sm btn-outline-primary" title="Ver Extrato">
+                                <i class="fas fa-list-ul"></i> <span class="d-none d-md-inline">Extrato</span>
+                            </a>
+                            
+                            {% if user.is_staff %}
+                            <form action="{% url 'excluir_usuario' account.user.id %}" method="POST" class="m-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Excluir usuário?')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">Nenhuma conta encontrada.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
         </div>
     </div>
 </div>
