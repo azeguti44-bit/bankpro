@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Account, Transaction
+from .models import Account, Transaction, Usuario   
 from .forms import CadastroUsuarioForm, TransferenciaentrecontasForm 
 from django.shortcuts import redirect
 import random
@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.contrib import messages 
 from django.db import transaction # Importante para segurança financeira
+from django.shortcuts import get_object_or_404
+
 
 # View simples para listar contas
 @login_required
@@ -61,7 +63,7 @@ def cadastrar_usuario(request):
                 user=usuario,
                 number=gerar_numero_unico(),
                 account_type='corrente',
-                balance=5.000
+                balance=5000.00
             )
             
             # 3. Cria a Conta Poupança
@@ -69,7 +71,7 @@ def cadastrar_usuario(request):
                 user=usuario,
                 number=gerar_numero_unico(),
                 account_type='poupanca',
-                balance=5.000
+                balance=5000.00
             )
             
             return redirect('login')
@@ -161,3 +163,32 @@ def transferir(request):
         form = TransferenciaentrecontasForm(user=request.user)
 
     return render(request, 'banco/transferir.html', {'form': form})
+
+
+# 1. Adicione o get_object_or_404 nos imports
+from django.shortcuts import render, redirect, get_object_or_404 
+# ... outros imports ...
+
+@login_required
+def excluir_usuario(request, user_id):
+    # Só deixa passar se for Supervisor (Staff)
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    # Tenta pegar o usuário. Se o ID for inválido, dá erro 404 automaticamente.
+    usuario_para_excluir = get_object_or_404(Usuario, id=user_id)
+
+    # Impede o supervisor de se auto-excluir
+    if usuario_para_excluir == request.user:
+        messages.error(request, "Você não pode excluir a si mesmo!")
+        return redirect('account_list')
+
+    # Se o método for POST (clicou no botão de confirmar)
+    if request.method == 'POST':
+        usuario_para_excluir.delete()
+        messages.success(request, "Usuário e suas contas foram removidos.")
+        return redirect('account_list')
+
+    # Se for apenas um GET (acessou a URL), você pode mostrar uma página de confirmação
+    # Ou, se preferir excluir direto pelo botão da tabela, o POST resolve.
+    return redirect('account_list')

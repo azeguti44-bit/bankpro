@@ -6,6 +6,7 @@
     <title>BankPro - Gestão de Contas</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8f9fa; }
@@ -14,6 +15,8 @@
         .table thead { background-color: #343a40; color: white; }
         .balance-positive { color: #28a745; font-weight: 600; }
         .balance-negative { color: #dc3545; font-weight: 600; }
+        /* Ajuste para os botões não ficarem colados no texto */
+        .btn-sm { padding: 0.4rem 0.8rem; }
     </style>
 </head>
 <body>
@@ -21,16 +24,15 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container d-flex justify-content-between">
         <a class="navbar-brand fw-bold" href="#">🏦 BankGo</a>
-
         <div class="navbar-nav">
             <a class="nav-link" href="{% url 'entrance' %}">Sair</a>
         </div>
     </div>
 </nav>
+
 <div class="container mt-3">
     {% if messages %}
         {% for message in messages %}
-            {# O Django converte 'error' para 'danger' automaticamente se configurado, ou usamos 'warning' para o amarelo #}
             <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
                 {{ message }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -39,21 +41,17 @@
     {% endif %}
 </div>
 
-
-    
-    <div class="container">
+<div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800">Visão Geral de Contas</h1>
-        
         <div class="d-flex gap-2">
             {% if not user.is_staff %}
                 <a href="{% url 'transferir' %}" class="btn btn-primary px-4 shadow-sm">
                     💸 Transferir
                 </a>
-
             {% endif %}
         </div>
-        </div>
+    </div>
 
     <div class="card p-3">
         <div class="table-responsive">
@@ -81,13 +79,28 @@
                             </span>
                         </td>
                         <td class="{% if account.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
-                            R$ {{ account.balance }}
+                            R$ {{ account.balance|floatformat:2 }}
                         </td>
-                            <td class="text-center">
-                                <a href="{% url 'transaction_list' account.id %}" class="btn btn-sm btn-outline-primary">
-                                Ver Extrato
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                
+                                <a href="{% url 'transaction_list' account.id %}" class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1">
+                                    <i class="fas fa-list-ul"></i> Extrato
                                 </a>
-                            </td>
+
+                                {% if user.is_staff %}
+                                    <form action="{% url 'excluir_usuario' account.user.id %}" method="POST" 
+                                          onsubmit="return confirm('Deseja excluir permanentemente o usuário {{ account.user.nome_completo }}?');"
+                                          class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger d-flex align-items-center gap-1">
+                                            <i class="fas fa-trash-alt"></i> Excluir
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                            </div>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>

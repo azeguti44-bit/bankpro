@@ -1,8 +1,10 @@
-asgiref==3.11.0
-Django==6.0
-sqlparse==0.5.5
-tzdata==2025.3
-psycopg2-binary==2.9.10
-gunicorn==23.0.0
-whitenoise==6.8.2
+﻿asgiref==3.11.0
 dj-database-url==2.3.0
+Django==6.0
+gunicorn==23.0.0
+packaging==25.0
+psycopg2-binary==2.9.10
+sqlparse==0.5.5
+typing_extensions==4.15.0
+tzdata==2025.3
+whitenoise==6.8.2

@@ -23,10 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-^=98rhv8g@ugy)p6eg9za7z$-vo!r)n3@$ph!@^xhnwh0zfsgv')
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# SECURITY WARNING: don't run with debug turned on in production! #rodar no Render
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else ['*']
+
+# PARA RODAR LOCAL
+# DEBUG = True  # Comentei a linha do environ e fixei como True
+# ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -79,11 +82,24 @@ WSGI_APPLICATION = 'banco.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+#rodar no Render
 import dj_database_url
+
 
 DATABASES = {
     'default': dj_database_url.config(default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
 }
+
+
+# Use este para o dia a dia no seu PC:
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
 
 
 # Password validation
