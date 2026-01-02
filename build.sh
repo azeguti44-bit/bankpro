@@ -2,14 +2,14 @@
 # exit on error
 set -o errexit
 
-# 1. Instala as dependências usando o Poetry (já que o Render o detectou)
+# 1. Garante a instalação das dependências no ambiente do Poetry
 poetry install
 
-# 2. Comandos do Django executados ATRAVÉS do poetry run
+# 2. Roda os comandos do Django usando 'poetry run'
 poetry run python manage.py collectstatic --no-input
 poetry run python manage.py migrate
 
-# 3. Script para resetar as senhas e garantir os usuários
+# 3. Executa o script de usuários/senhas dentro do ambiente virtual
 poetry run python manage.py shell << END
 from django.contrib.auth import get_user_model
 from django.apps import apps
@@ -30,7 +30,7 @@ def ajustar_ou_criar(username, nome, cpf, email, senha):
         user.save()
         print(f"Senha de {username} atualizada.")
 
-# Ajustando o Supervisor
+# Supervisor - garante que ele exista e tenha a senha correta
 sup = User.objects.filter(username='supervisor').first()
 if sup:
     sup.set_password('admin_senha123')
@@ -40,6 +40,7 @@ if sup:
 else:
     User.objects.create_superuser(username='supervisor', nome_completo='Admin', cpf='00000000000', email='a@a.com', password='admin_senha123')
 
+# Clientes - garante que existam e tenham as senhas corretas
 ajustar_ou_criar('peter', 'Cliente Um', '29730565864', 'peter@gmail.com', 'senha123')
 ajustar_ou_criar('hook', 'Cliente Dois', '55566677788', 'hook@gmail.com', 'senha123')
 END
