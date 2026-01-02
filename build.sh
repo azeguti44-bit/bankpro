@@ -21,8 +21,8 @@ def criar_cliente(username, nome, cpf, email, senha):
         Account.objects.create(user=u, number=str(random.randint(1000, 9999)), account_type='poupanca', balance=5000)
 
 if not User.objects.filter(username='supervisor').exists():
-    User.objects.create_superuser(username='supervisor', nome_completo='Admin', cpf='00000000000', email='a@a.com', password='admin_senha_123')
+    User.objects.create_superuser(username='supervisor', nome_completo='Admin', cpf='00000000000', email='a@a.com', password='admin_senha123')
 
-criar_cliente('usuario1', 'Cliente Um', '11122233344', 'u1@e.com', 'senha123')
-criar_cliente('usuario2', 'Cliente Dois', '55566677788', 'u2@e.com', 'senha123')
+criar_cliente('peter', 'Cliente Um', '29730565864', 'peter@gmail.com', 'senha123')
+criar_cliente('hook', 'Cliente Dois', '55566677788', 'hook@gmail.com', 'senha123')
 END
