@@ -61,7 +61,7 @@ def cadastrar_usuario(request):
                 user=usuario,
                 number=gerar_numero_unico(),
                 account_type='corrente',
-                balance=0.00
+                balance=5.000
             )
             
             # 3. Cria a Conta Poupança
@@ -69,7 +69,7 @@ def cadastrar_usuario(request):
                 user=usuario,
                 number=gerar_numero_unico(),
                 account_type='poupanca',
-                balance=0.00
+                balance=5.000
             )
             
             return redirect('login')
