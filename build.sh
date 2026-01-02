@@ -2,16 +2,15 @@
 # exit on error
 set -o errexit
 
-# 1. Instalação das dependências (Forçando o Pip para garantir)
-python -m pip install --upgrade pip
-pip install -r requirements.txt
+# 1. Instala as dependências usando o Poetry (já que o Render o detectou)
+poetry install
 
-# 2. Comandos do Django
-python manage.py collectstatic --no-input
-python manage.py migrate
+# 2. Comandos do Django executados ATRAVÉS do poetry run
+poetry run python manage.py collectstatic --no-input
+poetry run python manage.py migrate
 
-# 3. Script Python para ajustar usuários e senhas
-python manage.py shell << END
+# 3. Script para resetar as senhas e garantir os usuários
+poetry run python manage.py shell << END
 from django.contrib.auth import get_user_model
 from django.apps import apps
 import random
@@ -31,7 +30,7 @@ def ajustar_ou_criar(username, nome, cpf, email, senha):
         user.save()
         print(f"Senha de {username} atualizada.")
 
-# Supervisor
+# Ajustando o Supervisor
 sup = User.objects.filter(username='supervisor').first()
 if sup:
     sup.set_password('admin_senha123')
