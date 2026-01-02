@@ -1,10 +1,10 @@
 services:
   - type: web
     name: banco-app
-    plan: free # <--- ADICIONE ESTA LINHA
+    plan: free 
     env: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn core.wsgi:application"
+    startCommand: "gunicorn banco.wsgi:application"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
@@ -17,4 +17,4 @@ services:
 
 databases:
   - name: banco-db
-    plan: free # <--- ADICIONE ESTA LINHA TAMBÉM
+    plan: free 
