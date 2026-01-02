@@ -1,50 +1,90 @@
-<div class="card p-2 p-md-3">
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="d-none d-md-table-header-group"> <tr>
-                    <th>Usuário</th>
-                    <th class="d-none d-lg-table-cell">Número</th> <th>Tipo</th>
-                    <th>Saldo</th>
-                    <th class="text-center">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for account in accounts %}
-                <tr>
-                    <td>
-                        <div class="fw-bold text-truncate" style="max-width: 150px;">
-                            {{ account.user.nome_completo|default:account.user.username }}
-                        </div>
-                        <small class="text-muted d-block">@{{ account.user.username }}</small>
-                        <small class="d-md-none text-secondary">CC: {{ account.number }}</small> </td>
-                    <td class="d-none d-lg-table-cell"><code>{{ account.number }}</code></td>
-                    <td>
-                        <span class="badge bg-info text-dark" style="font-size: 0.75rem;">
-                            {{ account.get_account_type_display|truncatechars:10 }}
-                        </span>
-                    </td>
-                    <td class="{% if account.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
-                        <small class="d-block d-md-none text-muted" style="font-size: 0.6rem;">SALDO</small>
-                        R$ {{ account.balance|floatformat:2 }}
-                    </td>
-                    <td class="text-center">
-                        <div class="d-flex flex-column flex-md-row justify-content-center gap-1 gap-md-2">
-                            <a href="{% url 'transaction_list' account.id %}" class="btn btn-sm btn-outline-primary py-1 px-2">
-                                <i class="fas fa-list-ul"></i> <span class="d-none d-xl-inline">Extrato</span>
-                            </a>
-                            {% if user.is_staff %}
-                            <form action="{% url 'excluir_usuario' account.user.id %}" method="POST" class="m-0">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" onclick="return confirm('Excluir?')">
-                                    <i class="fas fa-trash-alt"></i> <span class="d-none d-xl-inline">Excluir</span>
-                                </button>
-                            </form>
-                            {% endif %}
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankPro - Gestão de Contas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .balance-positive { color: #28a745; font-weight: 600; }
+        .balance-negative { color: #dc3545; font-weight: 600; }
+        .table thead { background-color: #343a40; color: white; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container d-flex justify-content-between">
+        <a class="navbar-brand fw-bold" href="#">🏦 BankGo</a>
+        <div class="navbar-nav"><a class="nav-link" href="{% url 'entrance' %}">Sair</a></div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Contas</h1>
+        {% if not user.is_staff %}
+            <a href="{% url 'transferir' %}" class="btn btn-primary shadow-sm">💸 Transferir</a>
+        {% endif %}
+    </div>
+
+    <div class="card p-2 p-md-3">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="d-none d-md-table-header-group">
+                    <tr>
+                        <th>Usuário</th>
+                        <th class="d-none d-lg-table-cell">Número</th>
+                        <th>Tipo</th>
+                        <th>Saldo</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for account in accounts %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-truncate" style="max-width: 150px;">
+                                {{ account.user.nome_completo|default:account.user.username }}
+                            </div>
+                            <small class="text-muted d-block">@{{ account.user.username }}</small>
+                            <small class="d-md-none text-secondary">CC: {{ account.number }}</small>
+                        </td>
+                        <td class="d-none d-lg-table-cell"><code>{{ account.number }}</code></td>
+                        <td>
+                            <span class="badge bg-info text-dark" style="font-size: 0.75rem;">
+                                {{ account.get_account_type_display|truncatechars:10 }}
+                            </span>
+                        </td>
+                        <td class="{% if account.balance >= 0 %}balance-positive{% else %}balance-negative{% endif %}">
+                            <small class="d-block d-md-none text-muted" style="font-size: 0.6rem;">SALDO</small>
+                            R$ {{ account.balance|floatformat:2 }}
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column flex-md-row justify-content-center gap-1 gap-md-2">
+                                <a href="{% url 'transaction_list' account.id %}" class="btn btn-sm btn-outline-primary py-1 px-2">
+                                    <i class="fas fa-list-ul"></i> <span class="d-none d-xl-inline">Extrato</span>
+                                </a>
+                                {% if user.is_staff %}
+                                <form action="{% url 'excluir_usuario' account.user.id %}" method="POST" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" onclick="return confirm('Excluir?')">
+                                        <i class="fas fa-trash-alt"></i> <span class="d-none d-xl-inline">Excluir</span>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
+</body>
+</html>
