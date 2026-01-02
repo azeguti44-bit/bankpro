@@ -1,17 +1,20 @@
 services:
   - type: web
     name: banco-app
-    runtime: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
-    startCommand: "gunicorn banco.wsgi:application --log-file -"
+    plan: free # <--- ADICIONE ESTA LINHA
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn core.wsgi:application"
     envVars:
-      - key: DEBUG
-        value: "false"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: banco-db
+          property: connectionString
       - key: SECRET_KEY
         generateValue: true
-      - key: ALLOWED_HOSTS
-        fromService:
-          type: web
-          name: banco-app
-          property: host
-    plan: starter
+      - key: DEBUG
+        value: "False"
+
+databases:
+  - name: banco-db
+    plan: free # <--- ADICIONE ESTA LINHA TAMBÉM
