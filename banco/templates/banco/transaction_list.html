@@ -11,6 +11,8 @@
         .card { border: none; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         .badge-deposit { background-color: #d1e7dd; color: #0f5132; }
         .badge-withdrawal { background-color: #f8d7da; color: #842029; }
+        /* Garante que o nome não quebre o layout no mobile */
+        .text-name-mobile { font-weight: 600; color: #495057; }
     </style>
 </head>
 <body>
@@ -35,15 +37,15 @@
                     <tr>
                         <th>Data</th>
                         <th>Tipo</th>
-                        <th class="d-none d-md-table-cell">Descrição</th>
-                        <th class="text-end">Valor</th>
+                        <th>Descrição</th> <th class="text-end">Valor</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for transaction in transactions %}
                     <tr>
-                        <td class="text-muted" style="font-size: 0.85rem;">
-                            {{ transaction.timestamp|date:"d/m" }} <span class="d-none d-md-inline">{{ transaction.timestamp|date:"/Y H:i" }}</span>
+                        <td class="text-muted" style="font-size: 0.8rem;">
+                            {{ transaction.timestamp|date:"d/m" }}
+                            <span class="d-none d-md-inline">{{ transaction.timestamp|date:"/y H:i" }}</span>
                         </td>
                         <td>
                             {% if transaction.transaction_type == 'DEPOSITO' %}
@@ -52,10 +54,30 @@
                                 <span class="badge badge-withdrawal"><i class="fas fa-arrow-up"></i> <span class="d-none d-md-inline">Saque</span></span>
                             {% endif %}
                         </td>
-                        <td class="text-description d-none d-md-table-cell">{{ transaction.description|default:"---"|truncatechars:30 }}</td>
-                        <td class="text-end fw-bold {% if transaction.transaction_type == 'SAQUE' %}text-danger{% else %}text-success{% endif %}" style="white-space: nowrap;">
+                        
+                        <td style="font-size: 0.85rem;">
+                            <div class="d-md-none">
+                                {% if "Transferência enviada para" in transaction.description %}
+                                    <span class="text-danger">Para:</span> <span class="text-name-mobile">{{ transaction.description|cut:"Transferência enviada para " }}</span>
+                                {% elif "Transferência recebida de" in transaction.description %}
+                                    <span class="text-success">De:</span> <span class="text-name-mobile">{{ transaction.description|cut:"Transferência recebida de " }}</span>
+                                {% else %}
+                                    {{ transaction.description|truncatechars:15 }}
+                                {% endif %}
+                            </div>
+
+                            <div class="d-none d-md-block text-muted">
+                                {{ transaction.description|default:"---"|truncatechars:40 }}
+                            </div>
+                        </td>
+
+                        <td class="text-end fw-bold {% if transaction.transaction_type == 'SAQUE' %}text-danger{% else %}text-success{% endif %}" style="white-space: nowrap; font-size: 0.9rem;">
                             {% if transaction.transaction_type == 'SAQUE' %}-{% endif %}R$ {{ transaction.amount|floatformat:2 }}
                         </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-4 text-muted">Nenhuma transação encontrada.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
