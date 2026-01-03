@@ -104,7 +104,19 @@ def entrance(request):
 def transferir(request):
 
     if request.method == 'POST':
-        form = TransferenciaentrecontasForm(request.POST, user=request.user)
+        # --- ESSA É A PARTE NOVA QUE VOCÊ ADICIONA ---
+        dados_post = request.POST.copy() # Cria uma cópia para podermos mexer
+        
+        # Limpa o CPF: transforma "123.456.789-01" em "12345678901"
+        if 'cpf_destino' in dados_post:
+            dados_post['cpf_destino'] = dados_post['cpf_destino'].replace('.', '').replace('-', '')
+            
+        # Limpa o Valor: transforma "1.500,00" em "1500.00"
+        if 'valor' in dados_post:
+            dados_post['valor'] = dados_post['valor'].replace('.', '').replace(',', '.')
+        # ---------------------------------------------
+        # Agora, em vez de usar request.POST, usamos o dados_post (que está limpo!)
+        form = TransferenciaentrecontasForm(dados_post, user=request.user)
         if form.is_valid():
             dados = form.cleaned_data
             conta_origem = dados['conta_origem']
@@ -189,3 +201,21 @@ def excluir_usuario(request, user_id):
     # Se for apenas um GET (acessou a URL), você pode mostrar uma página de confirmação
     # Ou, se preferir excluir direto pelo botão da tabela, o POST resolve.
     return redirect('account_list')
+
+
+
+
+
+    # usuário: Romario
+    # senha: senha@123
+    # cc 796372
+    # cp 683035
+    # cpf 12345678900
+
+    # usuário: Neymar
+    # senha: senha@123
+    # cc 609619
+    # cp 910896
+    # cpf 11122233344
+
+

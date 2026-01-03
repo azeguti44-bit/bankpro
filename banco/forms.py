@@ -26,11 +26,31 @@ class TransferenciaentrecontasForm(forms.Form):
     )
     
     # Dados do Destino (Para buscar outro usuário)
-    cpf_destino = forms.CharField(max_length=11, label="CPF do Destinatário", widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apenas números'}))
-    numero_conta_destino = forms.CharField(max_length=10, label="Número da Conta", widget=forms.TextInput(attrs={'class': 'form-control'}))
-    tipo_conta_destino = forms.ChoiceField(choices=Account.TIPOS_CONTA, label="Tipo de Conta", widget=forms.Select(attrs={'class': 'form-control'}))
+    cpf_destino = forms.CharField(
+        max_length=14, 
+        label="CPF do Destinatário", 
+        widget=forms.TextInput(attrs={
+            'class': 'form-control mask-cpf', 
+            'placeholder': '000.000.000-00'
+            }
+        ))
+    numero_conta_destino = forms.CharField(
+        max_length=10, 
+        label="Número da Conta", 
+        widget=forms.TextInput(attrs={
+        'class': 'form-control' # Apenas o visual do Bootstrap, sem máscara JS
+    })
+)
     
-    valor = forms.DecimalField(max_digits=12, decimal_places=2, min_value=0.01, widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    valor = forms.DecimalField(
+        max_digits=12, 
+        decimal_places=2, 
+        min_value=0.01, 
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control mask-money'
+            'placeholder': '0,00'
+        })
+)
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
